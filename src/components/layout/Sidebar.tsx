@@ -45,7 +45,7 @@ export function Sidebar() {
         ))}
 
         <p className="mt-5 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-          Fluxo da demo
+          Fluxo
         </p>
         {fluxo.map((l) => (
           <Link
