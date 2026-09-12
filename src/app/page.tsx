@@ -1,144 +1,133 @@
-import Link from "next/link";
-import { MascoteSol } from "@/components/MascoteSol";
+import { BarrasEvolucao, DonutMateriais } from "@/components/charts/Graficos";
+import { Card, CardTitle } from "@/components/ui/Card";
+import { Icon } from "@/components/ui/Icon";
+import { LogoMarca } from "@/components/ui/Logo";
+import {
+  ATUALIZADO_EM,
+  EVOLUCAO_RECICLAGEM,
+  IMPACTO_ESTIMADO,
+  INDICADORES_BRASIL,
+  MATERIAIS_RECICLADOS,
+  USUARIO,
+  VARIACAO_RECICLAGEM,
+} from "@/lib/data/panorama";
 
-const paineis = [
-  {
-    href: "/empresa",
-    titulo: "Painel da Empresa",
-    descricao:
-      "Empresas, indústrias e eventos solicitam coletas rastreáveis, comprovam as metas da política reversa (PNRS e Decreto 12.688/2025) e emitem créditos de reciclagem auditados em blockchain.",
-    emoji: "🏢",
-  },
-  {
-    href: "/cooperativa",
-    titulo: "Painel da Cooperativa",
-    descricao:
-      "Cooperativas e catadores recebem o material direto da fonte, sem atravessadores, e acompanham a dignidade econômica social: renda média e participação de mulheres.",
-    emoji: "♻️",
-  },
-  {
-    href: "/cidadao",
-    titulo: "dApp do Cidadão",
-    descricao:
-      "O cidadão devolve embalagens nos ecopontos e totens, acompanha o destino auditável do seu resíduo e é recompensado com pontos e cashback.",
-    emoji: "📱",
-  },
-];
-
-const indicadores = [
-  { valor: "82 mi t", legenda: "de resíduos sólidos gerados no Brasil por ano" },
-  { valor: "4%", legenda: "é tudo o que o país recicla hoje" },
-  { valor: "96%", legenda: "de espaço para alcançar novos negócios" },
-  { valor: "R$ 120 bi", legenda: "de prejuízo anual com a gestão ineficiente" },
-];
-
-const ciclo = [
-  "Empresa solicita a coleta rastreável",
-  "Cooperativa aceita e organiza a triagem",
-  "Cidadão devolve a embalagem e ganha recompensa",
-  "Cooperativa confirma o recebimento",
-  "Crédito de reciclagem auditado na blockchain",
-];
-
-const impacto2030 = [
-  "200.000 toneladas de resíduos reciclados",
-  "195.000 toneladas de CO₂ evitadas",
-  "15.000 a 20.000 catadores com +85% de renda média",
-  "70% das vagas destinadas a mulheres",
-];
+const ICONES: Record<string, string> = {
+  reciclagem: "recycle",
+  ponto: "pin",
+  cooperativa: "users",
+  projeto: "clipboard",
+  co2: "co2",
+  arvore: "tree",
+};
 
 export default function Home() {
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-12">
-      <section className="flex flex-col items-center gap-6 text-center">
-        <MascoteSol size={110} />
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-emerald-900 sm:text-5xl">
-            ECOLchain
+          <h1 className="text-2xl font-bold tracking-tight text-emerald-900 sm:text-3xl">
+            Olá, {USUARIO.nome}! 👋
           </h1>
-          <p className="mt-2 text-sm font-bold uppercase tracking-[0.2em] text-emerald-700 sm:text-base">
-            Recicle · Monetize · Escale · Sustentabilidade
+          <p className="mt-1 text-sm text-slate-500">
+            Veja o panorama da reciclagem no Brasil e acompanhe os principais indicadores.
           </p>
         </div>
-        <p className="max-w-2xl text-emerald-800/80">
-          Ecossistema de finanças regenerativas (ReFi) que usa blockchain e
-          tokenomics para dar transparência e rastreabilidade a toda a política
-          reversa de resíduos — conectando poder público, empresas, cooperativas
-          e cidadãos em um modelo onde todos ganham.
-        </p>
-        <p className="max-w-2xl text-sm font-medium text-emerald-700">
-          Visão: ser a maior plataforma de economia circular inclusiva da
-          América Latina, com escala global.
-        </p>
-      </section>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-400">Atualizado em {ATUALIZADO_EM}</span>
+          <span className="flex items-center gap-2 rounded-full border border-emerald-100 bg-white px-3 py-2 text-sm font-medium text-slate-600">
+            <Icon name="globe" size={16} className="text-emerald-600" />
+            Brasil
+            <Icon name="chevronDown" size={14} className="text-slate-400" />
+          </span>
+        </div>
+      </div>
 
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {indicadores.map((i) => (
-          <div
-            key={i.valor}
-            className="rounded-2xl border border-emerald-200 bg-white p-4 text-center shadow-sm"
-          >
-            <p className="text-2xl font-extrabold text-emerald-600">{i.valor}</p>
-            <p className="mt-1 text-xs text-emerald-800/70">{i.legenda}</p>
-          </div>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {INDICADORES_BRASIL.map((i) => (
+          <Card key={i.id} className="flex items-center gap-4">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+              <Icon name={ICONES[i.icone]} size={22} />
+            </span>
+            <span>
+              <span className="block text-xl font-bold text-slate-800">{i.valor}</span>
+              <span className="block text-sm text-slate-500">{i.titulo}</span>
+              <span className="block text-[11px] text-slate-400">{i.detalhe}</span>
+            </span>
+          </Card>
         ))}
-      </section>
+      </div>
 
-      <section className="grid gap-6 sm:grid-cols-3">
-        {paineis.map((p) => (
-          <Link
-            key={p.href}
-            href={p.href}
-            className="group rounded-2xl border border-emerald-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-emerald-400 hover:shadow-md"
+      <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr_0.9fr]">
+        <Card>
+          <CardTitle
+            icone="chart"
+            acao={
+              <span className="flex items-center gap-1 text-xs font-semibold text-emerald-600">
+                <Icon name="arrowUp" size={13} />
+                {VARIACAO_RECICLAGEM}
+                <span className="font-normal text-slate-400">(vs 2020)</span>
+              </span>
+            }
           >
-            <span className="text-3xl">{p.emoji}</span>
-            <h2 className="mt-3 text-lg font-bold text-emerald-900 group-hover:text-emerald-600">
-              {p.titulo}
-            </h2>
-            <p className="mt-2 text-sm text-emerald-800/70">{p.descricao}</p>
-          </Link>
-        ))}
-      </section>
+            Evolução da reciclagem no Brasil
+          </CardTitle>
+          <BarrasEvolucao dados={EVOLUCAO_RECICLAGEM} />
+        </Card>
 
-      <section className="rounded-2xl border border-amber-300/60 bg-amber-50 p-6">
-        <h2 className="text-lg font-bold text-amber-900">
-          O ciclo auditável da ECOLchain
-        </h2>
-        <ol className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          {ciclo.map((passo, i) => (
-            <li
-              key={passo}
-              className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-sm sm:flex-1"
-            >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">
-                {i + 1}
-              </span>
-              <span className="text-sm font-medium text-emerald-900">
-                {passo}
-              </span>
-            </li>
-          ))}
-        </ol>
-      </section>
+        <Card>
+          <CardTitle icone="package">Materiais reciclados (2024)</CardTitle>
+          <DonutMateriais
+            dados={MATERIAIS_RECICLADOS}
+            centroValor="4,8 t"
+            centroRotulo="total reciclado"
+          />
+          <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
+            {MATERIAIS_RECICLADOS.map((m) => (
+              <li key={m.nome} className="flex items-center gap-2 text-xs text-slate-600">
+                <span className="h-2.5 w-2.5 rounded-full" style={{ background: m.cor }} />
+                <span className="flex-1">{m.nome}</span>
+                <span className="font-semibold text-slate-700">
+                  {m.valor.toLocaleString("pt-BR")}%
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Card>
 
-      <section className="rounded-2xl border border-emerald-200 bg-emerald-900 p-6 text-emerald-50">
-        <h2 className="text-lg font-bold text-amber-300">
-          Impacto projetado 2030
-        </h2>
-        <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-          {impacto2030.map((m) => (
-            <li key={m} className="flex items-start gap-2 text-sm">
-              <span className="text-amber-300">◆</span>
-              {m}
-            </li>
-          ))}
-        </ul>
-        <p className="mt-4 text-xs text-emerald-200/80">
-          Alinhado a 8 dos 17 Objetivos de Desenvolvimento Sustentável da ONU e
-          à Lei 14.260/2021 (Incentivo à Reciclagem). Fase 1: São Paulo capital
-          e região metropolitana.
+        <Card>
+          <CardTitle icone="leaf">Impacto estimado (2024)</CardTitle>
+          <ul className="flex flex-col gap-3">
+            {IMPACTO_ESTIMADO.map((i) => (
+              <li
+                key={i.titulo}
+                className="flex items-center gap-3 rounded-xl bg-emerald-50/70 p-3"
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-emerald-600">
+                  <Icon name={ICONES[i.icone]} size={20} />
+                </span>
+                <span>
+                  <span className="block text-lg font-bold text-slate-800">{i.valor}</span>
+                  <span className="block text-xs text-slate-500">{i.titulo}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
+            Estimativas calculadas sobre os volumes reciclados verificados na rede ECOLchain.
+          </p>
+        </Card>
+      </div>
+
+      <section className="flex flex-wrap items-center justify-between gap-4 overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-800 to-emerald-600 px-6 py-5 text-white">
+        <p className="text-lg font-semibold sm:text-xl">
+          Mais dados, mais transparência, mais impacto.
         </p>
+        <span className="flex items-center gap-2 rounded-full bg-white/15 px-3 py-2 text-sm">
+          <LogoMarca size={24} />
+          ECOLchain
+        </span>
       </section>
-    </main>
+    </div>
   );
 }

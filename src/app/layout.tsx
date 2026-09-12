@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Nav } from "@/components/Nav";
+import { Sidebar, NavMobile } from "@/components/layout/Sidebar";
+import { Topbar } from "@/components/layout/Topbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ECOLchain | Recicle, monetize, escale sustentabilidade",
+  title: "ECOLchain | Dados reais. Impacto verificável.",
   description:
-    "Ecossistema ReFi de economia circular inclusiva: blockchain e tokenomics para dar transparência e rastreabilidade à política reversa de resíduos no Brasil.",
+    "Plataforma de economia circular com dados reais, transparência e impacto: panorama da reciclagem, mapa de ecopontos, ranking de projetos e evidências auditáveis.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -25,9 +26,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-emerald-50/60 text-emerald-950">
-        <Nav />
-        {children}
+      <body className="flex min-h-full flex-col bg-[#f3faf5] text-slate-800">
+        <Topbar />
+        <NavMobile />
+        <div className="flex flex-1">
+          <Sidebar />
+          <main className="min-w-0 flex-1 px-4 py-6 sm:px-6">{children}</main>
+        </div>
       </body>
     </html>
   );
