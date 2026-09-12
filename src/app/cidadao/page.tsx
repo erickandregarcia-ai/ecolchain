@@ -13,9 +13,9 @@ const vouchers = [
 ];
 
 const ecopontos = [
-  { nome: "Ecoponto Parque do Sol", top: "22%", left: "18%" },
-  { nome: "Totem Mercado Central", top: "55%", left: "62%" },
-  { nome: "Ecoponto Estação Verde", top: "74%", left: "30%" },
+  { nome: "Ecoponto Parque do Sol", top: "22%", left: "25%" },
+  { nome: "Totem Mercado Central", top: "55%", left: "58%" },
+  { nome: "Ecoponto Estação Verde", top: "74%", left: "35%" },
 ];
 
 export default async function CidadaoPage() {
@@ -92,7 +92,7 @@ export default async function CidadaoPage() {
           {ecopontos.map((e) => (
             <div
               key={e.nome}
-              className="absolute flex flex-col items-center"
+              className="absolute flex -translate-x-1/2 flex-col items-center"
               style={{ top: e.top, left: e.left }}
             >
               <span className="text-xl leading-none">📍</span>

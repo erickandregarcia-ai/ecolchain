@@ -33,7 +33,7 @@ export function PainelESG({
     <section className="rounded-2xl border border-emerald-200 bg-white p-6 shadow-sm">
       <h2 className="text-lg font-bold text-emerald-900">Painel ESG</h2>
 
-      <div className="mt-4 grid grid-cols-3 gap-3">
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded-xl bg-emerald-600 p-4 text-white">
           <p className="text-xs font-medium uppercase tracking-wide text-emerald-100">
             Toneladas Recicladas

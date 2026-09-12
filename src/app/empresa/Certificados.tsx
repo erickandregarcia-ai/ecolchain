@@ -26,7 +26,7 @@ export function Certificados({ certificados }: { certificados: Certificado[] }) 
   }
 
   return (
-    <section className="rounded-2xl border border-emerald-200 bg-white p-6 shadow-sm lg:col-span-2">
+    <section className="rounded-2xl border border-emerald-200 bg-white p-6 shadow-sm">
       <h2 className="text-lg font-bold text-emerald-900">
         Certificados de Rastreabilidade
       </h2>
@@ -52,8 +52,8 @@ export function Certificados({ certificados }: { certificados: Certificado[] }) 
             <p className="mt-1 text-sm text-emerald-700">
               {c.material} · {c.volume.toLocaleString("pt-BR")} t · {c.data}
             </p>
-            <div className="mt-2 flex items-center gap-2">
-              <code className="flex-1 truncate rounded bg-emerald-950 px-3 py-1.5 font-mono text-xs text-emerald-100">
+            <div className="mt-2 flex min-w-0 items-center gap-2">
+              <code className="min-w-0 flex-1 truncate rounded bg-emerald-950 px-3 py-1.5 font-mono text-xs text-emerald-100">
                 {c.hash}
               </code>
               <button

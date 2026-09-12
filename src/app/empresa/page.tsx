@@ -49,14 +49,20 @@ export default async function EmpresaPage() {
       </p>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <NovaSolicitacao empresas={empresas} />
-        <PainelESG
-          dados={dados}
-          toneladasTotal={toneladasTotal}
-          creditosESG={creditosESG}
-          coletasAuditadas={auditados.length}
-        />
-        <Certificados certificados={certificados} />
+        <div className="min-w-0">
+          <NovaSolicitacao empresas={empresas} />
+        </div>
+        <div className="min-w-0">
+          <PainelESG
+            dados={dados}
+            toneladasTotal={toneladasTotal}
+            creditosESG={creditosESG}
+            coletasAuditadas={auditados.length}
+          />
+        </div>
+        <div className="min-w-0 lg:col-span-2">
+          <Certificados certificados={certificados} />
+        </div>
       </div>
     </main>
   );
