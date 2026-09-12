@@ -34,7 +34,7 @@ export interface Cooperativa {
   percentual_mulheres: number;
 }
 
-export type StatusMatch = "pendente" | "aceito" | "auditado";
+export type StatusMatch = "pendente" | "aceito" | "auditado" | "recusado";
 
 export interface MatchResiduo {
   id: string;
@@ -52,4 +52,13 @@ export interface UsuarioB2C {
   nome: string;
   pontos_reciclagem: number;
   cashback_acumulado: number;
+}
+
+export interface Devolucao {
+  id: string;
+  usuario_id: string;
+  tipo_residuo: TipoResiduo;
+  pontos: number;
+  cashback: number;
+  created_at: string;
 }

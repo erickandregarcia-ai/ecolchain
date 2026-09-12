@@ -1,5 +1,6 @@
 import type {
   Cooperativa,
+  Devolucao,
   Empresa,
   MatchResiduo,
   StatusMatch,
@@ -93,6 +94,7 @@ interface MemoryState {
   cooperativas: Cooperativa[];
   matches: MatchResiduo[];
   usuarios: UsuarioB2C[];
+  devolucoes: Devolucao[];
 }
 
 const globalStore = globalThis as unknown as { __ecolchainState?: MemoryState };
@@ -107,6 +109,24 @@ function getState(): MemoryState {
       })),
       matches: SEED_MATCHES.map((m) => ({ ...m })),
       usuarios: [{ ...SEED_USUARIO }],
+      devolucoes: [
+        {
+          id: crypto.randomUUID(),
+          usuario_id: SEED_USUARIO.id,
+          tipo_residuo: "PET",
+          pontos: 50,
+          cashback: 2.5,
+          created_at: new Date(Date.now() - 3 * 86400_000).toISOString(),
+        },
+        {
+          id: crypto.randomUUID(),
+          usuario_id: SEED_USUARIO.id,
+          tipo_residuo: "Alumínio",
+          pontos: 120,
+          cashback: 6,
+          created_at: new Date(Date.now() - 86400_000).toISOString(),
+        },
+      ],
     };
   }
   return globalStore.__ecolchainState;
@@ -141,6 +161,20 @@ export const memoryDb = {
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       );
+  },
+
+  async buscarMatchPorHash(
+    hash: string,
+  ): Promise<
+    (MatchResiduo & { empresa: Empresa; cooperativa: Cooperativa }) | null
+  > {
+    const matches = await this.listMatches();
+    return (
+      matches.find(
+        (m) =>
+          m.hash_blockchain?.toLowerCase() === hash.trim().toLowerCase(),
+      ) ?? null
+    );
   },
 
   async criarMatch(input: {
@@ -185,5 +219,29 @@ export const memoryDb = {
     usuario.pontos_reciclagem += pontos;
     usuario.cashback_acumulado += cashback;
     return usuario;
+  },
+
+  async registrarDevolucao(input: {
+    usuario_id: string;
+    tipo_residuo: TipoResiduo;
+    pontos: number;
+    cashback: number;
+  }): Promise<Devolucao> {
+    const devolucao: Devolucao = {
+      id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
+      ...input,
+    };
+    getState().devolucoes.push(devolucao);
+    return devolucao;
+  },
+
+  async listarDevolucoes(usuarioId: string): Promise<Devolucao[]> {
+    return getState()
+      .devolucoes.filter((d) => d.usuario_id === usuarioId)
+      .sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
   },
 };

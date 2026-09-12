@@ -3,37 +3,73 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { simularScanQr } from "@/app/actions";
+import { RECOMPENSAS } from "@/lib/recompensas";
+import { TIPOS_RESIDUO, type TipoResiduo } from "@/lib/db/types";
 import { MascoteSol } from "@/components/MascoteSol";
 
 export function ScanTotem({ usuarioId }: { usuarioId: string }) {
   const router = useRouter();
-  const [aberto, setAberto] = useState(false);
+  const [tipo, setTipo] = useState<TipoResiduo>("PET");
+  const [resultado, setResultado] = useState<{
+    ganho: number;
+    bonus: number;
+  } | null>(null);
   const [pending, startTransition] = useTransition();
+
+  const recompensa = RECOMPENSAS[tipo];
 
   function escanear() {
     startTransition(async () => {
-      await simularScanQr(usuarioId);
-      setAberto(true);
+      const res = await simularScanQr(usuarioId, tipo);
+      setResultado({ ganho: res.ganho, bonus: res.bonus });
     });
   }
 
   function fechar() {
-    setAberto(false);
+    setResultado(null);
     router.refresh();
   }
 
   return (
     <>
+      <p className="mt-6 text-sm font-medium text-emerald-800">
+        O que você está devolvendo?
+      </p>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {TIPOS_RESIDUO.map((t) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => setTipo(t)}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+              tipo === t
+                ? "border-emerald-600 bg-emerald-600 text-white"
+                : "border-emerald-300 bg-emerald-50 text-emerald-800 hover:border-emerald-500"
+            }`}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+
       <button
         type="button"
         onClick={escanear}
         disabled={pending}
-        className="mt-6 w-full rounded-2xl bg-emerald-600 px-6 py-4 text-lg font-extrabold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700 disabled:opacity-60"
+        className="mt-4 w-full rounded-2xl bg-emerald-600 px-6 py-4 text-lg font-extrabold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700 disabled:opacity-60"
       >
         {pending ? "Escaneando..." : "📷 Devolver embalagem no totem"}
       </button>
+      <p className="mt-2 text-center text-xs font-medium text-emerald-700">
+        {tipo}: +{recompensa.pontos} pontos · +
+        {recompensa.cashback.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        })}{" "}
+        de cashback
+      </p>
 
-      {aberto && (
+      {resultado && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-emerald-950/60 p-4"
           onClick={fechar}
@@ -49,12 +85,21 @@ export function ScanTotem({ usuarioId }: { usuarioId: string }) {
               Devolução registrada na blockchain!
             </h2>
             <p className="mt-2 text-emerald-700">
-              <span className="font-bold text-emerald-600">+50 pontos</span> e{" "}
-              <span className="font-bold text-amber-600">+R$ 2,50</span> de
-              cashback
+              <span className="font-bold text-emerald-600">
+                +{resultado.ganho} pontos
+              </span>{" "}
+              e{" "}
+              <span className="font-bold text-amber-600">
+                +
+                {resultado.bonus.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </span>{" "}
+              de cashback
             </p>
             <p className="mt-2 text-xs text-emerald-700/70">
-              Seu esforço foi recompensado e o material segue rastreável até a
+              Seu {tipo} foi recompensado e o material segue rastreável até a
               indústria recicladora.
             </p>
             <button

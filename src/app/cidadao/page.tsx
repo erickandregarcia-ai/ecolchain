@@ -19,7 +19,11 @@ const ecopontos = [
 ];
 
 export default async function CidadaoPage() {
-  const usuario = await getDb().getUsuario(USUARIO_ID);
+  const db = getDb();
+  const [usuario, devolucoes] = await Promise.all([
+    db.getUsuario(USUARIO_ID),
+    db.listarDevolucoes(USUARIO_ID),
+  ]);
 
   return (
     <main className="flex flex-1 items-start justify-center px-4 py-8">
@@ -104,6 +108,48 @@ export default async function CidadaoPage() {
         </div>
 
         <ScanTotem usuarioId={USUARIO_ID} />
+
+        {/* histórico */}
+        <h2 className="mt-6 text-sm font-bold uppercase tracking-wide text-emerald-700">
+          Últimas devoluções
+        </h2>
+        <div className="mt-2 flex flex-col gap-2">
+          {devolucoes.length === 0 && (
+            <p className="text-sm text-emerald-700/60">
+              Nenhuma devolução registrada ainda.
+            </p>
+          )}
+          {devolucoes.slice(0, 5).map((d) => (
+            <div
+              key={d.id}
+              className="flex items-center justify-between rounded-xl border border-emerald-100 bg-white px-4 py-2.5"
+            >
+              <div>
+                <p className="text-sm font-medium text-emerald-900">
+                  ♻ {d.tipo_residuo}
+                </p>
+                <p className="text-[11px] text-slate-400">
+                  {new Date(d.created_at).toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "short",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+              </div>
+              <p className="text-right text-xs font-bold text-emerald-700">
+                +{d.pontos} pts
+                <span className="block font-semibold text-amber-600">
+                  +
+                  {d.cashback.toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </span>
+              </p>
+            </div>
+          ))}
+        </div>
 
         <p className="mt-4 text-center text-xs text-emerald-700/70">
           Cada devolução é registrada em blockchain: você recicla, a cooperativa

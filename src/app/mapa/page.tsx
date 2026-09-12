@@ -27,6 +27,48 @@ export default function MapaPage() {
   const [materiais, setMateriais] = useState<string[]>([]);
   const [busca, setBusca] = useState("");
   const [selecionado, setSelecionado] = useState<PontoMapa>(PONTOS[0]);
+  const [voce, setVoce] = useState<{ x: number; y: number } | null>(null);
+  const [localizando, setLocalizando] = useState(false);
+  const [erroLoc, setErroLoc] = useState(false);
+
+  const distanciaDe = (p: PontoMapa) =>
+    voce ? Math.hypot(p.x - voce.x, p.y - voce.y) * 0.18 : null;
+
+  const fmtDist = (p: PontoMapa) => {
+    const d = distanciaDe(p);
+    return d == null
+      ? p.distancia
+      : `${d.toLocaleString("pt-BR", { maximumFractionDigits: 1 })} km`;
+  };
+
+  function localizar() {
+    if (!navigator.geolocation) {
+      setErroLoc(true);
+      return;
+    }
+    setErroLoc(false);
+    setLocalizando(true);
+    navigator.geolocation.getCurrentPosition(
+      () => {
+        const pos = { x: 50, y: 48 };
+        setVoce(pos);
+        setLocalizando(false);
+        setSelecionado(
+          PONTOS.reduce((a, b) =>
+            Math.hypot(a.x - pos.x, a.y - pos.y) <
+            Math.hypot(b.x - pos.x, b.y - pos.y)
+              ? a
+              : b,
+          ),
+        );
+      },
+      () => {
+        setLocalizando(false);
+        setErroLoc(true);
+      },
+      { timeout: 8000 },
+    );
+  }
 
   const pontos = useMemo(
     () =>
@@ -40,6 +82,18 @@ export default function MapaPage() {
               .includes(busca.trim().toLowerCase()),
         ),
     [tipo, materiais, busca],
+  );
+
+  const pontosOrdenados = useMemo(
+    () =>
+      voce
+        ? [...pontos].sort(
+            (a, b) =>
+              Math.hypot(a.x - voce.x, a.y - voce.y) -
+              Math.hypot(b.x - voce.x, b.y - voce.y),
+          )
+        : pontos,
+    [pontos, voce],
   );
 
   const alternarMaterial = (m: string) =>
@@ -72,11 +126,23 @@ export default function MapaPage() {
           </label>
           <button
             type="button"
-            className="flex h-11 items-center gap-2 rounded-full bg-emerald-600 px-4 text-sm font-semibold text-white transition hover:bg-emerald-700"
+            onClick={localizar}
+            disabled={localizando}
+            className="flex h-11 items-center gap-2 rounded-full bg-emerald-600 px-4 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
           >
             <Icon name="locate" size={17} />
-            Minha localização
+            {localizando ? "Localizando..." : "Minha localização"}
           </button>
+          {erroLoc && (
+            <span className="text-xs text-red-600">
+              Não foi possível obter sua localização.
+            </span>
+          )}
+          {voce && !erroLoc && (
+            <span className="text-xs text-emerald-700">
+              Distâncias recalculadas a partir de você.
+            </span>
+          )}
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -147,6 +213,20 @@ export default function MapaPage() {
               </button>
             ))}
 
+            {voce && (
+              <span
+                className="absolute flex -translate-x-1/2 -translate-y-full flex-col items-center"
+                style={{ left: `${voce.x}%`, top: `${voce.y}%` }}
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full rounded-bl-none bg-slate-800 shadow-md ring-2 ring-white">
+                  <Icon name="user" size={16} className="text-white" />
+                </span>
+                <span className="mt-1 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-semibold text-slate-800 shadow">
+                  Você
+                </span>
+              </span>
+            )}
+
             <div
               className="absolute w-64 max-w-[85%] -translate-x-1/2 rounded-2xl border border-emerald-100 bg-white p-3 shadow-lg"
               style={{
@@ -164,7 +244,7 @@ export default function MapaPage() {
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-slate-800">{selecionado.nome}</p>
                   <p className="text-xs text-slate-400">
-                    {selecionado.tipo} · {selecionado.distancia}
+                    {selecionado.tipo} · {fmtDist(selecionado)}
                   </p>
                 </div>
               </div>
@@ -235,7 +315,7 @@ export default function MapaPage() {
               {pontos.length} resultado{pontos.length === 1 ? "" : "s"}
             </h2>
             <ul className="max-h-64 overflow-y-auto">
-              {pontos.map((p) => (
+              {pontosOrdenados.map((p) => (
                 <li key={p.id}>
                   <button
                     type="button"
@@ -250,7 +330,7 @@ export default function MapaPage() {
                     />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-slate-700">{p.nome}</span>
-                      <span className="block text-xs text-slate-400">{p.distancia}</span>
+                      <span className="block text-xs text-slate-400">{fmtDist(p)}</span>
                     </span>
                   </button>
                 </li>

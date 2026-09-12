@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useMemo, useState } from "react";
 import { StatusBadge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Icon } from "@/components/ui/Icon";
 import { ScorePill } from "@/components/ui/ScoreRing";
 import { PROJETOS, SELOS, type Selo } from "@/lib/data/projetos";
 
-export default function ProjetosPage() {
+function ProjetosLista({ buscaInicial }: { buscaInicial: string }) {
   const [selo, setSelo] = useState<Selo | "Todos">("Todos");
-  const [busca, setBusca] = useState("");
+  const [busca, setBusca] = useState(buscaInicial);
 
   const projetos = useMemo(
     () =>
@@ -149,5 +150,18 @@ export default function ProjetosPage() {
         <Icon name="leaf" size={40} className="ml-auto hidden shrink-0 text-emerald-200 sm:block" />
       </Card>
     </div>
+  );
+}
+
+function ProjetosPageInner() {
+  const q = useSearchParams().get("q") ?? "";
+  return <ProjetosLista key={q} buscaInicial={q} />;
+}
+
+export default function ProjetosPage() {
+  return (
+    <Suspense>
+      <ProjetosPageInner />
+    </Suspense>
   );
 }

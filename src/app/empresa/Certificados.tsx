@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 interface Certificado {
@@ -25,15 +26,53 @@ export function Certificados({ certificados }: { certificados: Certificado[] }) 
     }
   }
 
+  function exportarCsv() {
+    const linhas = [
+      ["Empresa", "Cooperativa", "Material", "Volume (t)", "Data", "Hash"],
+      ...certificados.map((c) => [
+        c.empresa,
+        c.cooperativa,
+        c.material,
+        String(c.volume).replace(".", ","),
+        c.data,
+        c.hash,
+      ]),
+    ];
+    const csv = linhas
+      .map((l) => l.map((v) => `"${v.replaceAll('"', '""')}"`).join(";"))
+      .join("\r\n");
+    const url = URL.createObjectURL(
+      new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" }),
+    );
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "certificados-ecolchain.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <section className="rounded-2xl border border-emerald-200 bg-white p-6 shadow-sm">
-      <h2 className="text-lg font-bold text-emerald-900">
-        Certificados de rastreabilidade
-      </h2>
-      <p className="mt-1 text-sm text-emerald-700">
-        Comprovação auditável da política reversa, com segurança jurídica contra
-        fraudes ambientais.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-bold text-emerald-900">
+            Certificados de rastreabilidade
+          </h2>
+          <p className="mt-1 text-sm text-emerald-700">
+            Comprovação auditável da política reversa, com segurança jurídica
+            contra fraudes ambientais.
+          </p>
+        </div>
+        {certificados.length > 0 && (
+          <button
+            type="button"
+            onClick={exportarCsv}
+            className="rounded-lg border border-emerald-300 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50"
+          >
+            ⬇ Exportar CSV
+          </button>
+        )}
+      </div>
       {certificados.length === 0 && (
         <p className="mt-4 text-sm text-emerald-700/70">
           Nenhuma coleta auditada ainda.
@@ -67,6 +106,12 @@ export function Certificados({ certificados }: { certificados: Certificado[] }) 
               >
                 {copiado === c.id ? "Copiado!" : "Copiar"}
               </button>
+              <Link
+                href={`/verificar?hash=${encodeURIComponent(c.hash)}`}
+                className="shrink-0 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-emerald-700"
+              >
+                Verificar
+              </Link>
             </div>
           </div>
         ))}

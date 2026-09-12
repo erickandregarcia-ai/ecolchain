@@ -36,12 +36,21 @@ const ICONE_RESUMO: Record<string, string> = {
 const ESTADOS_FILTRO = ["Todos", ...RANKING_ESTADOS.map((e) => e.uf)];
 const STATUS_FILTRO = ["Todos", "Verificado", "Em análise"];
 
+const CRITERIOS_SCORE = [
+  { nome: "Rastreabilidade", peso: 30, desc: "Cadeia de custódia auditável do resíduo, da origem à indústria" },
+  { nome: "Impacto ambiental", peso: 25, desc: "Toneladas recicladas e CO₂ evitado verificados" },
+  { nome: "Impacto social", peso: 20, desc: "Renda dos catadores, inclusão e dignidade econômica" },
+  { nome: "Inovação", peso: 15, desc: "Uso de tecnologia para transparência e escala" },
+  { nome: "Governança", peso: 10, desc: "Conformidade legal, evidências e prestação de contas" },
+];
+
 export default function RankingPage() {
   const [aba, setAba] = useState<Aba>("Empresas");
   const [setor, setSetor] = useState("Todos");
   const [iniciativa, setIniciativa] = useState("Todos");
   const [estado, setEstado] = useState("Todos");
   const [statusVerificacao, setStatusVerificacao] = useState("Todos");
+  const [scoreAberto, setScoreAberto] = useState(false);
 
   const limpar = () => {
     setSetor("Todos");
@@ -145,10 +154,14 @@ export default function RankingPage() {
                     : "Cooperativas homologadas, com catadores e volumes rastreados."}
             </p>
           </div>
-          <span className="flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-3 py-2 text-xs font-medium text-slate-600">
+          <button
+            type="button"
+            onClick={() => setScoreAberto(true)}
+            className="flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 transition hover:border-emerald-400 hover:text-emerald-800"
+          >
             <Icon name="info" size={15} className="text-emerald-600" />
             Como funciona o ranking
-          </span>
+          </button>
           <span className="flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-medium text-emerald-800 shadow-sm ring-1 ring-emerald-200">
             <Icon name="checkCircle" size={15} className="text-emerald-600" />
             Evidência verificada pela ECOLchain
@@ -401,12 +414,64 @@ export default function RankingPage() {
           <Icon name="leaf" size={28} className="mt-4 text-emerald-200" />
         </Card>
 
-        <Card className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setScoreAberto(true)}
+          className="flex w-full items-center gap-3 rounded-2xl border border-emerald-100 bg-white p-4 text-left shadow-sm transition hover:border-emerald-300"
+        >
           <Icon name="chart" size={18} className="text-emerald-600" />
           <span className="flex-1 text-sm text-slate-600">Veja como o score é calculado</span>
           <Icon name="chevronRight" size={16} className="text-slate-300" />
-        </Card>
+        </button>
       </div>
+
+      {scoreAberto && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-emerald-950/60 p-4"
+          onClick={() => setScoreAberto(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-lg font-bold text-emerald-900">
+              ECOLchain Sustainability Score
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Nota de 0 a 100 calculada sobre evidências verificáveis, com pesos
+              por critério:
+            </p>
+            <ul className="mt-4 flex flex-col gap-3">
+              {CRITERIOS_SCORE.map((c) => (
+                <li key={c.nome}>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-semibold text-slate-700">{c.nome}</span>
+                    <span className="font-bold text-emerald-700">{c.peso}%</span>
+                  </div>
+                  <div className="mt-1 h-2 overflow-hidden rounded-full bg-emerald-100">
+                    <div
+                      className="h-full rounded-full bg-emerald-500"
+                      style={{ width: `${c.peso}%` }}
+                    />
+                  </div>
+                  <p className="mt-1 text-xs text-slate-400">{c.desc}</p>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 rounded-xl bg-emerald-50 px-3 py-2 text-xs text-emerald-800">
+              Projetos e empresas só entram no ranking com evidências auditadas
+              na rede ECOLchain.
+            </p>
+            <button
+              type="button"
+              onClick={() => setScoreAberto(false)}
+              className="mt-5 w-full rounded-xl bg-emerald-600 px-4 py-3 font-bold text-white transition hover:bg-emerald-700"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

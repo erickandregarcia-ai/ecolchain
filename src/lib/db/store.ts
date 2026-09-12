@@ -1,5 +1,6 @@
 import type {
   Cooperativa,
+  Devolucao,
   Empresa,
   MatchResiduo,
   StatusMatch,
@@ -16,6 +17,11 @@ export interface Db {
   listMatches(): Promise<
     (MatchResiduo & { empresa: Empresa; cooperativa: Cooperativa })[]
   >;
+  buscarMatchPorHash(
+    hash: string,
+  ): Promise<
+    (MatchResiduo & { empresa: Empresa; cooperativa: Cooperativa }) | null
+  >;
   criarMatch(input: {
     evento_id: string;
     cooperativa_id: string;
@@ -29,6 +35,13 @@ export interface Db {
   ): Promise<void>;
   getUsuario(id: string): Promise<UsuarioB2C | null>;
   creditarPontos(id: string, pontos: number, cashback: number): Promise<UsuarioB2C>;
+  registrarDevolucao(input: {
+    usuario_id: string;
+    tipo_residuo: TipoResiduo;
+    pontos: number;
+    cashback: number;
+  }): Promise<Devolucao>;
+  listarDevolucoes(usuarioId: string): Promise<Devolucao[]>;
 }
 
 export function getDb(): Db {

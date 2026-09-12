@@ -1,4 +1,5 @@
 import { getDb } from "@/lib/db/store";
+import type { TipoResiduo } from "@/lib/db/types";
 import { Kanban, type MatchCard } from "./Kanban";
 
 export const dynamic = "force-dynamic";
@@ -6,6 +7,15 @@ export const dynamic = "force-dynamic";
 const COOP_DESTAQUE = "33333333-3333-4333-8333-333333333333"; // Cooperativa Mulheres do Amanhã
 const META_RENDA = 85;
 const META_MULHERES = 70;
+
+const PRECO_TONELADA: Record<TipoResiduo, number> = {
+  PET: 1200,
+  "Tetra Pak": 600,
+  Alumínio: 4500,
+  Vidro: 150,
+  Papelão: 350,
+  Eletroeletrônicos: 2000,
+};
 
 export default async function CooperativaPage() {
   const db = getDb();
@@ -28,6 +38,13 @@ export default async function CooperativaPage() {
 
   const destaque = cooperativas.find((c) => c.id === COOP_DESTAQUE);
   const renda = destaque?.indicador_impacto_renda ?? 0;
+
+  const receitaDe = (status: "aceito" | "auditado") =>
+    matches
+      .filter((m) => m.status === status)
+      .reduce((s, m) => s + m.volume_estimado * PRECO_TONELADA[m.tipo_residuo], 0);
+  const receitaAuditada = receitaDe("auditado");
+  const receitaAReceber = receitaDe("aceito");
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-8">
@@ -79,11 +96,45 @@ export default async function CooperativaPage() {
         </p>
       </section>
 
+      <section className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-600 p-6 text-white shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-wide text-emerald-100">
+            Receita auditada em blockchain
+          </p>
+          <p className="mt-1 text-3xl font-extrabold">
+            {receitaAuditada.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+              maximumFractionDigits: 0,
+            })}
+          </p>
+          <p className="mt-1 text-xs text-emerald-100">
+            material já recebido e auditado, vendido direto à indústria
+          </p>
+        </div>
+        <div className="rounded-2xl border border-amber-300 bg-amber-400 p-6 text-amber-950 shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-wide text-amber-800">
+            A receber (coletas em andamento)
+          </p>
+          <p className="mt-1 text-3xl font-extrabold">
+            {receitaAReceber.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+              maximumFractionDigits: 0,
+            })}
+          </p>
+          <p className="mt-1 text-xs text-amber-800">
+            estimativa pelos preços médios de R$/t por material
+          </p>
+        </div>
+      </section>
+
       <div className="mt-6">
         <Kanban
           pendentes={toCard("pendente")}
           aceitos={toCard("aceito")}
           auditados={toCard("auditado")}
+          recusados={toCard("recusado")}
         />
       </div>
     </main>

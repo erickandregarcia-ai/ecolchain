@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { resumoRede } from "@/app/actions";
 import { Card } from "@/components/ui/Card";
 import { Icon } from "@/components/ui/Icon";
 import { LogoMarca } from "@/components/ui/Logo";
@@ -19,7 +20,21 @@ const SUGESTOES = [
   "Mostre o mapa do estado",
   "Quais são os principais projetos?",
   "Onde ficam os ecopontos em SP?",
+  "Resumo da rede em tempo real",
 ];
+
+const KEYWORDS_REDE = [
+  "auditad",
+  "blockchain",
+  "crédito",
+  "credito",
+  "co2",
+  "tonelada",
+  "resumo",
+];
+
+const ehSobreRede = (q: string) =>
+  KEYWORDS_REDE.some((k) => q.toLowerCase().includes(k));
 
 const topEstados = RANKING_ESTADOS.slice(0, 5).map(
   (e, i) => `${i + 1}. ${e.nome} – ${e.taxa.toLocaleString("pt-BR")}%`,
@@ -64,12 +79,37 @@ const INICIAL: Mensagem[] = [
 export default function AssistentePage() {
   const [mensagens, setMensagens] = useState<Mensagem[]>(INICIAL);
   const [texto, setTexto] = useState("");
+  const [pensando, setPensando] = useState(false);
 
   const enviar = (pergunta: string) => {
     const limpa = pergunta.trim();
     if (!limpa) return;
-    setMensagens((m) => [...m, { autor: "usuario", texto: limpa }, responder(limpa)]);
+    setMensagens((m) => [...m, { autor: "usuario", texto: limpa }]);
     setTexto("");
+    if (ehSobreRede(limpa)) {
+      setPensando(true);
+      resumoRede()
+        .then((r) =>
+          setMensagens((m) => [
+            ...m,
+            {
+              autor: "ia",
+              texto: "Resumo da rede ECOLchain em tempo real:",
+              itens: [
+                `${r.coletas} coletas registradas`,
+                `${r.auditadas} auditadas em blockchain`,
+                `${r.toneladas.toLocaleString("pt-BR", { maximumFractionDigits: 1 })} t recicladas`,
+                `${r.creditos} créditos de reciclagem`,
+                `${r.co2Evitado.toLocaleString("pt-BR", { maximumFractionDigits: 1 })} t de CO₂ evitado`,
+              ],
+              fonte: "Rede ECOLchain | dados em tempo real",
+            },
+          ]),
+        )
+        .finally(() => setPensando(false));
+    } else {
+      setMensagens((m) => [...m, responder(limpa)]);
+    }
   };
 
   return (
@@ -116,6 +156,16 @@ export default function AssistentePage() {
               </div>
             </li>
           ))}
+          {pensando && (
+            <li className="flex gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50">
+                <LogoMarca size={22} />
+              </span>
+              <div className="rounded-2xl rounded-bl-sm bg-emerald-50/80 px-4 py-3 text-sm text-slate-400">
+                Consultando a rede…
+              </div>
+            </li>
+          )}
         </ul>
 
         <div className="flex flex-wrap gap-2">

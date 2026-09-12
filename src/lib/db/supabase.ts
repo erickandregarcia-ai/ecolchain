@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import type {
   Cooperativa,
+  Devolucao,
   Empresa,
   MatchResiduo,
   StatusMatch,
@@ -55,6 +56,24 @@ export const supabaseDb = {
       empresa: Empresa;
       cooperativa: Cooperativa;
     })[];
+  },
+
+  async buscarMatchPorHash(
+    hash: string,
+  ): Promise<
+    (MatchResiduo & { empresa: Empresa; cooperativa: Cooperativa }) | null
+  > {
+    const { data, error } = await getClient()
+      .from("tabela_match_residuos")
+      .select(
+        "*, empresa:tabela_empresas_eventos!evento_id(*), cooperativa:tabela_cooperativas!cooperativa_id(*)",
+      )
+      .ilike("hash_blockchain", hash.trim())
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return (data as
+      | (MatchResiduo & { empresa: Empresa; cooperativa: Cooperativa })
+      | null) ?? null;
   },
 
   async criarMatch(input: {
@@ -114,5 +133,30 @@ export const supabaseDb = {
       .single();
     if (error) throw new Error(error.message);
     return data as UsuarioB2C;
+  },
+
+  async registrarDevolucao(input: {
+    usuario_id: string;
+    tipo_residuo: TipoResiduo;
+    pontos: number;
+    cashback: number;
+  }): Promise<Devolucao> {
+    const { data, error } = await getClient()
+      .from("tabela_devolucoes")
+      .insert(input)
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return data as Devolucao;
+  },
+
+  async listarDevolucoes(usuarioId: string): Promise<Devolucao[]> {
+    const { data, error } = await getClient()
+      .from("tabela_devolucoes")
+      .select("*")
+      .eq("usuario_id", usuarioId)
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (data ?? []) as Devolucao[];
   },
 };
