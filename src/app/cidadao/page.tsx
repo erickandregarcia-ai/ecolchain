@@ -13,9 +13,9 @@ const vouchers = [
 ];
 
 const ecopontos = [
-  { nome: "Ecoponto Parque do Sol", top: "22%", left: "25%" },
-  { nome: "Totem Mercado Central", top: "55%", left: "58%" },
-  { nome: "Ecoponto Estação Verde", top: "74%", left: "35%" },
+  { nome: "Ecoponto Vila Mariana", top: "22%", left: "25%" },
+  { nome: "Totem Mercado Municipal", top: "55%", left: "58%" },
+  { nome: "Ecoponto Estação Butantã", top: "74%", left: "35%" },
 ];
 
 export default async function CidadaoPage() {
@@ -28,8 +28,8 @@ export default async function CidadaoPage() {
         <div className="flex items-center gap-3">
           <MascoteSol size={64} />
           <div className="relative flex-1 rounded-2xl rounded-bl-sm bg-amber-100 px-4 py-3 text-sm font-medium text-amber-900">
-            Olá, {usuario?.nome ?? "reciclador(a)"}! Hoje é um ótimo dia para
-            reciclar ☀️
+            Oi, {usuario?.nome ?? "reciclador(a)"}! Sou o SOL. Devolva sua
+            embalagem limpa e acompanhe o destino dela até a indústria ☀️
           </div>
         </div>
 
@@ -58,7 +58,7 @@ export default async function CidadaoPage() {
 
         {/* descontos */}
         <h2 className="mt-6 text-sm font-bold uppercase tracking-wide text-emerald-700">
-          Descontos disponíveis
+          Clube de vantagens
         </h2>
         <div className="mt-2 flex flex-col gap-2">
           {vouchers.map((v) => (
@@ -78,7 +78,7 @@ export default async function CidadaoPage() {
 
         {/* mapa de ecopontos */}
         <h2 className="mt-6 text-sm font-bold uppercase tracking-wide text-emerald-700">
-          Ecopontos próximos
+          Ecopontos e totens próximos
         </h2>
         <div className="relative mt-2 h-52 overflow-hidden rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-100 via-emerald-50 to-amber-50">
           <div
@@ -104,6 +104,11 @@ export default async function CidadaoPage() {
         </div>
 
         <ScanTotem usuarioId={USUARIO_ID} />
+
+        <p className="mt-4 text-center text-xs text-emerald-700/70">
+          Cada devolução é registrada em blockchain: você recicla, a cooperativa
+          ganha renda e a empresa comprova a política reversa.
+        </p>
       </div>
     </main>
   );

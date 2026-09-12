@@ -41,7 +41,7 @@ function Card({ match }: { match: MatchCard }) {
           }
           className="mt-3 w-full rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-50"
         >
-          {pending ? "..." : "Aceitar Coleta"}
+          {pending ? "..." : "Aceitar coleta"}
         </button>
       )}
       {match.status === "aceito" && (
@@ -56,7 +56,7 @@ function Card({ match }: { match: MatchCard }) {
           }
           className="mt-3 w-full rounded-lg bg-amber-400 px-3 py-2 text-sm font-bold text-amber-950 transition hover:bg-amber-500 disabled:opacity-50"
         >
-          {pending ? "Auditando..." : "Confirmar Recebimento"}
+          {pending ? "Auditando..." : "Confirmar recebimento"}
         </button>
       )}
       {match.status === "auditado" && match.hash && (
@@ -103,17 +103,17 @@ export function Kanban({ pendentes, aceitos, auditados }: Props) {
   return (
     <div className="grid gap-4 md:grid-cols-3">
       <Coluna
-        titulo="Novas Solicitações"
+        titulo="Novas solicitações"
         cor="bg-amber-100/70 border border-amber-200"
         cards={pendentes}
       />
       <Coluna
-        titulo="Em Andamento"
+        titulo="Em andamento"
         cor="bg-emerald-100/70 border border-emerald-200"
         cards={aceitos}
       />
       <Coluna
-        titulo="Finalizadas"
+        titulo="Auditadas na blockchain"
         cor="bg-emerald-200/60 border border-emerald-300"
         cards={auditados}
       />

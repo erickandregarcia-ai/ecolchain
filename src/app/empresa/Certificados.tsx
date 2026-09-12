@@ -28,8 +28,12 @@ export function Certificados({ certificados }: { certificados: Certificado[] }) 
   return (
     <section className="rounded-2xl border border-emerald-200 bg-white p-6 shadow-sm">
       <h2 className="text-lg font-bold text-emerald-900">
-        Certificados de Rastreabilidade
+        Certificados de rastreabilidade
       </h2>
+      <p className="mt-1 text-sm text-emerald-700">
+        Comprovação auditável da política reversa, com segurança jurídica contra
+        fraudes ambientais.
+      </p>
       {certificados.length === 0 && (
         <p className="mt-4 text-sm text-emerald-700/70">
           Nenhuma coleta auditada ainda.

@@ -14,8 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ECOLchain",
-  description: "Logística reversa auditável — ReFi para resíduos de eventos no Brasil",
+  title: "ECOLchain | Recicle, monetize, escale sustentabilidade",
+  description:
+    "Ecossistema ReFi de economia circular inclusiva: blockchain e tokenomics para dar transparência e rastreabilidade à política reversa de resíduos no Brasil.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

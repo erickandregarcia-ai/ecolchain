@@ -35,7 +35,9 @@ export function NovaSolicitacao({ empresas }: Props) {
       fd.set("tipo_residuo", tipo);
       fd.set("volume_estimado", volume);
       await solicitarColeta(fd);
-      setMensagem("✅ Coleta solicitada com sucesso! A cooperativa foi notificada.");
+      setMensagem(
+        "✅ Coleta solicitada! A cooperativa foi notificada e o material segue direto da fonte para a reciclagem, sem atravessadores.",
+      );
       setResultados(null);
       router.refresh();
     });
@@ -44,11 +46,11 @@ export function NovaSolicitacao({ empresas }: Props) {
   return (
     <section className="rounded-2xl border border-emerald-200 bg-white p-6 shadow-sm">
       <h2 className="text-lg font-bold text-emerald-900">
-        Nova Solicitação de Coleta
+        Nova solicitação de coleta rastreável
       </h2>
 
       <label className="mt-4 block text-sm font-medium text-emerald-800">
-        Empresa / Evento
+        Empresa, indústria ou evento
       </label>
       <select
         value={empresaId}
@@ -63,7 +65,7 @@ export function NovaSolicitacao({ empresas }: Props) {
       </select>
 
       <p className="mt-4 text-sm font-medium text-emerald-800">
-        Tipo de material
+        Embalagem de alto valor
       </p>
       <div className="mt-2 flex flex-wrap gap-2">
         {TIPOS_RESIDUO.map((t) => (
@@ -100,7 +102,7 @@ export function NovaSolicitacao({ empresas }: Props) {
         disabled={pending}
         className="mt-4 w-full rounded-lg bg-emerald-600 px-4 py-2.5 font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-50"
       >
-        {pending ? "Buscando..." : "Buscar Cooperativas Próximas"}
+        {pending ? "Buscando..." : "Buscar cooperativas homologadas"}
       </button>
 
       {mensagem && (
@@ -112,7 +114,7 @@ export function NovaSolicitacao({ empresas }: Props) {
       {resultados && (
         <div className="mt-5 flex flex-col gap-3">
           <h3 className="text-sm font-bold uppercase tracking-wide text-emerald-700">
-            Match Encontrado ({resultados.length})
+            Cooperativas homologadas ({resultados.length})
           </h3>
           {resultados.length === 0 && (
             <p className="text-sm text-emerald-700/70">
@@ -129,7 +131,7 @@ export function NovaSolicitacao({ empresas }: Props) {
                   <p className="font-bold text-emerald-900">{c.nome}</p>
                   <p className="text-sm text-emerald-700">
                     📍 {c.localizacao} · Capacidade {c.capacidade_toneladas} t ·{" "}
-                    {c.percentual_mulheres}% mulheres
+                    {c.percentual_mulheres}% de vagas para mulheres
                   </p>
                   <p className="mt-1 text-xs text-emerald-600">
                     Aceita: {c.materiais_aceitos.join(", ")}
@@ -141,7 +143,7 @@ export function NovaSolicitacao({ empresas }: Props) {
                   disabled={pending}
                   className="shrink-0 rounded-lg bg-amber-400 px-3 py-2 text-sm font-bold text-amber-950 transition hover:bg-amber-500 disabled:opacity-50"
                 >
-                  Solicitar Coleta
+                  Solicitar coleta
                 </button>
               </div>
             </div>

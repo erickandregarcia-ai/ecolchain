@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 
 const COOP_DESTAQUE = "33333333-3333-4333-8333-333333333333"; // Cooperativa Mulheres do Amanhã
 const META_RENDA = 85;
+const META_MULHERES = 70;
 
 export default async function CooperativaPage() {
   const db = getDb();
@@ -34,23 +35,24 @@ export default async function CooperativaPage() {
         Painel da Cooperativa
       </h1>
       <p className="mt-1 text-sm text-emerald-700">
-        Gerencie as solicitações de coleta e acompanhe o impacto social da sua
-        equipe.
+        Receba o material direto da fonte, sem atravessadores, e acompanhe a
+        dignidade econômica social da sua equipe.
       </p>
 
       <section className="mt-6 rounded-2xl border border-emerald-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h2 className="text-lg font-bold text-emerald-900">
-              Evolução da renda média
+              Dignidade econômica social
             </h2>
             <p className="text-sm text-emerald-700">
-              {destaque?.nome ?? "Cooperativa"} · rumo à meta de {META_RENDA}% de
-              aumento de renda
+              {destaque?.nome ?? "Cooperativa"} · rumo à meta de +{META_RENDA}%
+              sobre a renda média do catador
             </p>
           </div>
           <span className="rounded-full bg-amber-400 px-4 py-1.5 text-sm font-bold text-amber-950">
-            {destaque?.percentual_mulheres}% mulheres na equipe (meta 70%)
+            {destaque?.percentual_mulheres}% de vagas para mulheres (meta{" "}
+            {META_MULHERES}%)
           </span>
         </div>
         <div className="mt-4 flex items-end gap-4">
@@ -69,6 +71,12 @@ export default async function CooperativaPage() {
             meta {META_RENDA}%
           </div>
         </div>
+        <p className="mt-3 text-xs text-emerald-700/80">
+          A devolução de resíduos limpos melhora a qualidade da triagem, elimina
+          o descarte de material coletado e conecta a cooperativa direto à
+          indústria — o que sustenta o aumento da renda e a receita com créditos
+          de reciclagem.
+        </p>
       </section>
 
       <div className="mt-6">

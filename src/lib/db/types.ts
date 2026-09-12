@@ -1,4 +1,10 @@
-export type TipoResiduo = "PET" | "Tetra Pak" | "Alumínio" | "Vidro" | "Papelão";
+export type TipoResiduo =
+  | "PET"
+  | "Tetra Pak"
+  | "Alumínio"
+  | "Vidro"
+  | "Papelão"
+  | "Eletroeletrônicos";
 
 export const TIPOS_RESIDUO: TipoResiduo[] = [
   "PET",
@@ -6,6 +12,7 @@ export const TIPOS_RESIDUO: TipoResiduo[] = [
   "Alumínio",
   "Vidro",
   "Papelão",
+  "Eletroeletrônicos",
 ];
 
 export interface Empresa {

@@ -30,7 +30,7 @@ export function ScanTotem({ usuarioId }: { usuarioId: string }) {
         disabled={pending}
         className="mt-6 w-full rounded-2xl bg-emerald-600 px-6 py-4 text-lg font-extrabold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700 disabled:opacity-60"
       >
-        {pending ? "Escaneando..." : "📷 Escanear QR Code do Totem"}
+        {pending ? "Escaneando..." : "📷 Devolver embalagem no totem"}
       </button>
 
       {aberto && (
@@ -46,12 +46,16 @@ export function ScanTotem({ usuarioId }: { usuarioId: string }) {
               <MascoteSol size={90} />
             </div>
             <h2 className="mt-4 text-xl font-extrabold text-emerald-900">
-              Depósito confirmado!
+              Devolução registrada na blockchain!
             </h2>
             <p className="mt-2 text-emerald-700">
               <span className="font-bold text-emerald-600">+50 pontos</span> e{" "}
               <span className="font-bold text-amber-600">+R$ 2,50</span> de
               cashback
+            </p>
+            <p className="mt-2 text-xs text-emerald-700/70">
+              Seu esforço foi recompensado e o material segue rastreável até a
+              indústria recicladora.
             </p>
             <button
               type="button"
