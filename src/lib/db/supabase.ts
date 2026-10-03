@@ -3,7 +3,9 @@ import type {
   Cooperativa,
   Devolucao,
   Empresa,
+  InscricaoEvento,
   MatchResiduo,
+  ResultadoSorteio,
   StatusMatch,
   TipoResiduo,
   UsuarioB2C,
@@ -158,5 +160,48 @@ export const supabaseDb = {
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
     return (data ?? []) as Devolucao[];
+  },
+  async criarInscricaoEvento(
+    input: Omit<InscricaoEvento, "id" | "created_at">,
+  ): Promise<InscricaoEvento> {
+    const { data, error } = await getClient()
+      .from("tabela_inscricoes_eventos")
+      .insert(input)
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return data as InscricaoEvento;
+  },
+
+  async listarInscricoesEvento(eventoId: string): Promise<InscricaoEvento[]> {
+    const { data, error } = await getClient()
+      .from("tabela_inscricoes_eventos")
+      .select("*")
+      .eq("evento_id", eventoId)
+      .order("created_at", { ascending: true });
+    if (error) throw new Error(error.message);
+    return (data ?? []) as InscricaoEvento[];
+  },
+
+  async registrarResultadoSorteio(
+    resultado: ResultadoSorteio,
+  ): Promise<ResultadoSorteio> {
+    const { data, error } = await getClient()
+      .from("tabela_resultados_sorteios")
+      .insert(resultado)
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return data as ResultadoSorteio;
+  },
+
+  async obterResultadoSorteio(eventoId: string): Promise<ResultadoSorteio | null> {
+    const { data, error } = await getClient()
+      .from("tabela_resultados_sorteios")
+      .select("*")
+      .eq("evento_id", eventoId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return (data as ResultadoSorteio | null) ?? null;
   },
 };
