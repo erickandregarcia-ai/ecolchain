@@ -2,7 +2,9 @@ import type {
   Cooperativa,
   Devolucao,
   Empresa,
+  InscricaoEvento,
   MatchResiduo,
+  ResultadoSorteio,
   StatusMatch,
   TipoResiduo,
   UsuarioB2C,
@@ -42,6 +44,12 @@ export interface Db {
     cashback: number;
   }): Promise<Devolucao>;
   listarDevolucoes(usuarioId: string): Promise<Devolucao[]>;
+  criarInscricaoEvento(
+    input: Omit<InscricaoEvento, "id" | "created_at">,
+  ): Promise<InscricaoEvento>;
+  listarInscricoesEvento(eventoId: string): Promise<InscricaoEvento[]>;
+  registrarResultadoSorteio(resultado: ResultadoSorteio): Promise<ResultadoSorteio>;
+  obterResultadoSorteio(eventoId: string): Promise<ResultadoSorteio | null>;
 }
 
 export function getDb(): Db {

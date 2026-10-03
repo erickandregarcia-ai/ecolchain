@@ -2,7 +2,9 @@ import type {
   Cooperativa,
   Devolucao,
   Empresa,
+  InscricaoEvento,
   MatchResiduo,
+  ResultadoSorteio,
   StatusMatch,
   TipoResiduo,
   UsuarioB2C,
@@ -95,6 +97,8 @@ interface MemoryState {
   matches: MatchResiduo[];
   usuarios: UsuarioB2C[];
   devolucoes: Devolucao[];
+  inscricoesEventos: InscricaoEvento[];
+  resultadosSorteios: ResultadoSorteio[];
 }
 
 const globalStore = globalThis as unknown as { __ecolchainState?: MemoryState };
@@ -127,9 +131,14 @@ function getState(): MemoryState {
           created_at: new Date(Date.now() - 86400_000).toISOString(),
         },
       ],
+      inscricoesEventos: [],
+      resultadosSorteios: [],
     };
   }
-  return globalStore.__ecolchainState;
+  const state = globalStore.__ecolchainState;
+  state.inscricoesEventos ??= [];
+  state.resultadosSorteios ??= [];
+  return state;
 }
 
 export const memoryDb = {
@@ -243,5 +252,42 @@ export const memoryDb = {
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       );
+  },
+  async criarInscricaoEvento(
+    input: Omit<InscricaoEvento, "id" | "created_at">,
+  ): Promise<InscricaoEvento> {
+    const inscricao: InscricaoEvento = {
+      id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
+      ...input,
+    };
+    getState().inscricoesEventos.push(inscricao);
+    return inscricao;
+  },
+
+  async listarInscricoesEvento(eventoId: string): Promise<InscricaoEvento[]> {
+    return getState()
+      .inscricoesEventos.filter((i) => i.evento_id === eventoId)
+      .sort(
+        (a, b) =>
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+      );
+  },
+
+  async registrarResultadoSorteio(
+    resultado: ResultadoSorteio,
+  ): Promise<ResultadoSorteio> {
+    const state = getState();
+    if (state.resultadosSorteios.some((r) => r.evento_id === resultado.evento_id)) {
+      throw new Error("Sorteio já realizado para este evento");
+    }
+    state.resultadosSorteios.push({ ...resultado });
+    return resultado;
+  },
+
+  async obterResultadoSorteio(eventoId: string): Promise<ResultadoSorteio | null> {
+    return (
+      getState().resultadosSorteios.find((r) => r.evento_id === eventoId) ?? null
+    );
   },
 };

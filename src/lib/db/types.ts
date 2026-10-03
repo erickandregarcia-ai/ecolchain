@@ -62,3 +62,33 @@ export interface Devolucao {
   cashback: number;
   created_at: string;
 }
+
+export interface InscricaoEvento {
+  id: string;
+  evento_id: string;
+  nome: string;
+  telefone: string;
+  data_nascimento: string;
+  numero_sorte: number;
+  data_visita: string;
+  created_at: string;
+}
+
+export interface ResultadoSorteio {
+  evento_id: string;
+  primeiro_lugar_id: string;
+  segundo_lugar_id: string;
+  terceiro_lugar_id: string;
+  sorteado_em: string;
+}
+
+export type LugarSorteio = "primeiro" | "segundo" | "terceiro";
+
+export const PREMIOS_SORTEIO: Record<LugarSorteio, string> = {
+  primeiro: "Hotel",
+  segundo: "Bolo",
+  terceiro: "Chapéu",
+};
+
+export const NUMERO_SORTE_MIN = 0;
+export const NUMERO_SORTE_MAX = 100;
